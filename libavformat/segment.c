@@ -42,6 +42,7 @@
 #include "libavutil/timecode.h"
 #include "libavutil/time_internal.h"
 #include "libavutil/timestamp.h"
+#include "libavutil/strftime_ms.h"
 
 typedef struct SegmentListEntry {
     int index;
@@ -196,11 +197,9 @@ static int set_segment_filename(AVFormatContext *s)
     if (seg->segment_idx_wrap)
         seg->segment_idx %= seg->segment_idx_wrap;
     if (seg->use_strftime) {
-        time_t now0;
-        struct tm *tm, tmpbuf;
-        time(&now0);
-        tm = localtime_r(&now0, &tmpbuf);
-        if (!strftime(oc->filename, sizeof(oc->filename), s->filename, tm)) {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+	if (!strftime_ms(oc->filename, sizeof(oc->filename), s->filename, &tv)) {
             av_log(oc, AV_LOG_ERROR, "Could not get segment filename with strftime\n");
             return AVERROR(EINVAL);
         }
