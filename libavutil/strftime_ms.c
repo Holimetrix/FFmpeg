@@ -20,10 +20,8 @@ size_t      strftime_ms(char* ptr,
 
     strftime_format_size = strlen(format);
     seek_format = format;
-    while ((seek_format = strstr(seek_format, "%")) != NULL)
-    {
-        switch (seek_format[1])
-        {
+    while ((seek_format = strstr(seek_format, "%")) != NULL) {
+        switch (seek_format[1]) {
         case 'L':
             strftime_format_size += 1;
             break;
@@ -35,13 +33,11 @@ size_t      strftime_ms(char* ptr,
         return 0;
     seek_format = format;
     seek_strftime_format = strftime_format;
-    while ((seek_format = strstr(format, "%")) != NULL)
-    {
+    while ((seek_format = strstr(format, "%")) != NULL) {
         memcpy(seek_strftime_format, format, seek_format - format);
         seek_strftime_format += seek_format - format;
         format = seek_format;
-        switch (seek_format[1])
-        {
+        switch (seek_format[1]) {
         case 'L':
             sprintf(seek_strftime_format, "%03ld", tv->tv_usec/1000);
             seek_strftime_format += 3;
@@ -58,8 +54,7 @@ size_t      strftime_ms(char* ptr,
     memcpy(seek_strftime_format, format, strlen(format));
     seek_strftime_format[strlen(format)] = '\0';
     tm = localtime(&(tv->tv_sec));
-    if(tm == NULL)
-    {
+    if(tm == NULL) {
         free(strftime_format);
         return 0;
     }
