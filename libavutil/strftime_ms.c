@@ -65,8 +65,7 @@ size_t      strftime_ms(char* ptr,
             format = seek_format;
         }
     }
-    memcpy(seek_strftime_format, format, strlen(format));
-    seek_strftime_format[strlen(format)] = '\0';
+    strcpy(seek_strftime_format, format);
     tm = localtime(&(tv->tv_sec));
     if(tm == NULL) {
         free(strftime_format);
