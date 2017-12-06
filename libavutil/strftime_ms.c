@@ -11,12 +11,12 @@ size_t      strftime_ms(char* ptr,
                         const char* format,
                         const struct timeval* tv)
 {
-    const char	*seek_format;
-    char	*seek_strftime_format;
-    size_t	strftime_format_size;
-    char	*strftime_format;
-    struct tm	*tm;
-    size_t	result;
+    const char  *seek_format;
+    char        *seek_strftime_format;
+    size_t      strftime_format_size;
+    char        *strftime_format;
+    struct tm   *tm;
+    size_t      result;
 
     strftime_format_size = strlen(format);
     seek_format = format;
@@ -24,9 +24,14 @@ size_t      strftime_ms(char* ptr,
         switch (seek_format[1]) {
         case 'L':
             strftime_format_size += 1;
+            seek_format += 2;
             break;
+        case '\0':
+            seek_format += 1;
+            break;
+        default:
+            seek_format += 2;
         }
-        seek_format += 2;
     }
     strftime_format = malloc(strftime_format_size + 1);
     if (strftime_format == NULL)
@@ -39,9 +44,18 @@ size_t      strftime_ms(char* ptr,
         format = seek_format;
         switch (seek_format[1]) {
         case 'L':
-            sprintf(seek_strftime_format, "%03ld", tv->tv_usec/1000);
+            if (!snprintf(seek_strftime_format,
+                          strftime_format_size,
+                          "%03ld", tv->tv_usec/1000)) {
+                free(strftime_format);
+                return 0;
+            }
             seek_strftime_format += 3;
             seek_format += 2;
+            format = seek_format;
+            break;
+        case '\0':
+            seek_format += 1;
             format = seek_format;
             break;
         default:
